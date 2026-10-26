@@ -25,7 +25,7 @@ For more information on the Cachet rebuild and our plans for 3.x, you can read t
 
 ## Requirements
 
-- PHP 8.3 or later
+- PHP **8.3.36+**, **8.4.27+**, or **8.5.12+** (required for CVE-2026-109618 / CVE-2026-109619)
 - [Composer](https://getcomposer.org)
 - A supported database: MariaDB, MySQL, PostgreSQL or SQLite
 

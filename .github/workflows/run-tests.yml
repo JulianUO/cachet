@@ -11,7 +11,7 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
-    name: Tests - PHP 8.4
+    name: Tests - PHP 8.4.27
 
     steps:
       - name: Checkout code
@@ -20,7 +20,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
+          php-version: 8.4.27
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, intl, gd, exif, iconv, fileinfo
           coverage: none
 
@@ -35,8 +35,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: composer-8.4-${{ hashFiles('composer.lock') }}
+          key: composer-8.4.27-${{ hashFiles('composer.lock') }}
           restore-keys: |
+            composer-8.4.27-
             composer-8.4-
 
       - name: Install dependencies
