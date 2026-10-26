@@ -1,0 +1,48 @@
+# Minimal production-oriented stack: Cachet + PostgreSQL.
+# Generate an APP_KEY first:  php -r "echo 'base64:'.base64_encode(random_bytes(32)), PHP_EOL;"
+# Or: docker compose run --rm --entrypoint php app artisan key:generate --show
+
+services:
+  app:
+    build: .
+    ports:
+      - "${CACHET_PORT:-8000}:80"
+    environment:
+      APP_NAME: Cachet
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_KEY: ${APP_KEY:?Set APP_KEY in the environment or a .env file}
+      APP_URL: ${APP_URL:-http://localhost:8000}
+      LOG_CHANNEL: stderr
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: cachet
+      DB_USERNAME: cachet
+      DB_PASSWORD: cachet
+      SESSION_DRIVER: database
+      CACHE_STORE: database
+      QUEUE_CONNECTION: database
+      CACHET_MIGRATE_ON_BOOT: ${CACHET_MIGRATE_ON_BOOT:-1}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: cachet
+      POSTGRES_USER: cachet
+      POSTGRES_PASSWORD: cachet
+    volumes:
+      - cachet-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cachet -d cachet"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  cachet-db:
