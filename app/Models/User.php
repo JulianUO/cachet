@@ -32,6 +32,9 @@ class User extends CachetUser implements FilamentUser
         'name',
         'email',
         'password',
+        'auth_provider',
+        'external_id',
+        'is_admin',
     ];
 
     /**
@@ -54,7 +57,16 @@ class User extends CachetUser implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'bool',
         ];
+    }
+
+    /**
+     * Whether this user authenticates through a local password.
+     */
+    public function usesLocalPassword(): bool
+    {
+        return filled($this->password) && blank($this->auth_provider);
     }
 
     public function canAccessPanel(Panel $panel): bool

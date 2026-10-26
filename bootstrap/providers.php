@@ -1,6 +1,7 @@
 <?php
 
 use App\Providers\AppServiceProvider;
+use App\Providers\AuthIntegrationServiceProvider;
 use Cachet\CachetCoreServiceProvider;
 use Cachet\CachetDashboardServiceProvider;
 
@@ -17,4 +18,6 @@ return [
     AppServiceProvider::class,
     CachetCoreServiceProvider::class,
     CachetDashboardServiceProvider::class,
+    // After the Cachet Filament panel so we can replace login and add pages.
+    AuthIntegrationServiceProvider::class,
 ];

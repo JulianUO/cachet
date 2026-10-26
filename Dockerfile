@@ -68,12 +68,15 @@ RUN apt-get update \
         libzip-dev \
         libpq-dev \
         libsqlite3-dev \
+        libldap2-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-configure ldap --with-libdir=lib/$(uname -m)-linux-gnu \
     && docker-php-ext-install -j"$(nproc)" \
         bcmath \
         exif \
         gd \
         intl \
+        ldap \
         opcache \
         pcntl \
         pdo_mysql \
