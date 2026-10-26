@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'title' => 'History',
+    'uptime_over_past_days' => 'Uptime over the past :days days',
+    'days_ago' => ':days days ago',
+    'today' => 'Today',
+    'view_calendar' => 'Calendar history',
+    'view_on_calendar' => 'View on calendar',
+    'view_timeline' => 'Incident timeline',
+    'month_heading' => ':month',
+    'previous_month' => 'Previous month',
+    'next_month' => 'Next month',
+    'no_events' => 'No incidents or maintenance on this day.',
+    'day_events' => 'Events on :date',
+    'incidents' => 'Incidents',
+    'maintenance' => 'Maintenance',
+    'had_partial_outage' => 'This component had a partial outage.',
+    'had_major_outage' => 'This component had a major outage.',
+    'had_maintenance' => 'This component was under maintenance.',
+    'components_had_outage' => ':count component had a partial outage|:count components had a partial outage',
+    'legend_operational' => 'Operational',
+    'legend_disrupted' => 'Incident or maintenance',
+    'legend_empty' => 'No events',
+];
