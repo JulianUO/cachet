@@ -11,6 +11,8 @@
 
 namespace App\Models;
 
+use App\Auth\ChecksPermissions;
+use App\Auth\Permission;
 use Cachet\Models\User as CachetUser;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\FilamentUser;
@@ -20,6 +22,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends CachetUser implements FilamentUser
 {
+    use ChecksPermissions;
     use HasApiTokens;
     use Notifiable;
 
@@ -35,6 +38,7 @@ class User extends CachetUser implements FilamentUser
         'auth_provider',
         'external_id',
         'is_admin',
+        'role',
     ];
 
     /**
@@ -71,7 +75,7 @@ class User extends CachetUser implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        return $this->isAdmin() || $this->hasPermission(Permission::DashboardAccess);
     }
 
     /**

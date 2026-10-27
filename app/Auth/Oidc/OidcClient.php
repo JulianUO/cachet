@@ -101,6 +101,7 @@ class OidcClient
             'external_id' => (string) data_get($claims, $map['external_id'] ?? 'sub', ''),
             'email' => (string) data_get($claims, $map['email'] ?? 'email', ''),
             'name' => data_get($claims, $map['name'] ?? 'name'),
+            'groups' => app(\App\Auth\ExternalGroupExtractor::class)->fromOidcClaims($claims),
             'claims' => $claims,
         ];
     }

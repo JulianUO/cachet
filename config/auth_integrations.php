@@ -59,6 +59,14 @@ return [
             'name' => env('OIDC_ATTR_NAME', 'name'),
         ],
         /*
+         | Claim paths inspected for groups/roles (Keycloak: groups and/or
+         | realm_access.roles). Comma-separated env override supported.
+         */
+        'groups_claim_paths' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('OIDC_GROUPS_CLAIM_PATHS', 'groups,realm_access.roles,resource_access.cachet.roles'))
+        ))),
+        /*
          | When true, first-time OIDC users are created automatically.
          */
         'auto_provision' => env('OIDC_AUTO_PROVISION', true),
@@ -95,6 +103,15 @@ return [
             'name' => env('LDAP_ATTR_NAME', 'cn'),
             'username' => env('LDAP_ATTR_USERNAME', 'uid'),
         ],
+        /*
+         | Attribute on the user entry listing group DNs (typically memberOf).
+         */
+        'group_attribute' => env('LDAP_GROUP_ATTRIBUTE', 'memberOf'),
+        /*
+         | Optional extra group search filter. Use {dn} for the user DN.
+         | Example: (&(objectClass=groupOfNames)(member={dn}))
+         */
+        'group_filter' => env('LDAP_GROUP_FILTER'),
         'auto_provision' => env('LDAP_AUTO_PROVISION', true),
         'default_is_admin' => env('LDAP_DEFAULT_IS_ADMIN', false),
     ],
