@@ -14,6 +14,7 @@ This software is derived from [Cachet](https://github.com/cachethq/cachet) by **
 | [Integrations UI](integrations-ui.md) | Dashboard Mail / Authentication / Slack |
 | [Docker](docker.md) | Image, compose, migrate-on-boot |
 | [Localization](localization.md) | Locales, Spanish Argentina (`es_AR`) |
+| [cachet-core package](cachet-core.md) | How this app uses `JulianUO/cachet-core` |
 | [License and attribution](license-and-attribution.md) | Cachet license, credits, trademarks |
 
 Upstream product docs: [docs.cachethq.io](https://docs.cachethq.io).

@@ -8,6 +8,12 @@
             "email": "james@alt-three.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/JulianUO/cachet-core"
+        }
+    ],
     "require": {
         "php": "^8.3.36 || ^8.4.27 || ^8.5.12",
         "cachethq/core": "dev-main",

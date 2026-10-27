@@ -26,6 +26,7 @@ For alternative licensing, contact [support@cachethq.io](mailto:support@cachethq
 
 ## Upstream
 
-- Application: [github.com/cachethq/cachet](https://github.com/cachethq/cachet)
-- Core package: [github.com/cachethq/core](https://github.com/cachethq/core)
+- Application: [github.com/cachethq/cachet](https://github.com/cachethq/cachet) → fork [JulianUO/cachet](https://github.com/JulianUO/cachet)
+- Core package: [github.com/cachethq/core](https://github.com/cachethq/core) → fork [JulianUO/cachet-core](https://github.com/JulianUO/cachet-core) (Composer name still `cachethq/core`)
 - Product docs: [docs.cachethq.io](https://docs.cachethq.io)
+- How the two forks connect: [cachet-core.md](cachet-core.md)
