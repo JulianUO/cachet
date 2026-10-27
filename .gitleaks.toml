@@ -1,0 +1,24 @@
+# Gitleaks config for this Cachet fork.
+# Real credentials must never be committed; only allow known test/local fixtures.
+
+title = "cachet"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Test fixtures, PHPUnit bootstrap key, docs, and env example placeholders"
+paths = [
+    '''(^|/)phpunit\.xml$''',
+    '''(^|/)tests/''',
+    '''(^|/)docs/''',
+    '''(^|/)\.env\.example$''',
+    '''(^|/)\.gitleaks\.toml$''',
+]
+
+[[allowlists]]
+description = "Local docker-compose demo password (must be overridden for real deployments)"
+regexTarget = "match"
+regexes = [
+    '''(?i)password[=: ].{0,20}cachet''',
+]

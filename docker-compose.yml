@@ -17,9 +17,10 @@ services:
       DB_CONNECTION: pgsql
       DB_HOST: db
       DB_PORT: 5432
-      DB_DATABASE: cachet
-      DB_USERNAME: cachet
-      DB_PASSWORD: cachet
+      DB_DATABASE: ${DB_DATABASE:-cachet}
+      DB_USERNAME: ${DB_USERNAME:-cachet}
+      # Local demo default only — set DB_PASSWORD / POSTGRES_PASSWORD for real use.
+      DB_PASSWORD: ${DB_PASSWORD:-cachet}
       SESSION_DRIVER: database
       CACHE_STORE: database
       QUEUE_CONNECTION: database
@@ -32,9 +33,10 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: cachet
-      POSTGRES_USER: cachet
-      POSTGRES_PASSWORD: cachet
+      POSTGRES_DB: ${DB_DATABASE:-cachet}
+      POSTGRES_USER: ${DB_USERNAME:-cachet}
+      # Keep in sync with app DB_PASSWORD when overriding.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cachet}
     volumes:
       - cachet-db:/var/lib/postgresql/data
     healthcheck:
