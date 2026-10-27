@@ -18,7 +18,7 @@ class LdapAuthenticator
     /**
      * Authenticate against LDAP with bind + search, then user bind.
      *
-     * @return array{external_id: string, email: string, name: ?string, username: string}|null
+     * @return array{external_id: string, email: string, name: ?string, username: string, groups: list<string>}|null
      */
     public function attempt(string $username, string $password): ?array
     {
@@ -51,7 +51,13 @@ class LdapAuthenticator
                 return null;
             }
 
-            return $this->mapEntry($entry, $username);
+            // Re-bind as service account for group lookups when configured.
+            $this->serviceBind($connection);
+
+            $identity = $this->mapEntry($entry, $username);
+            $identity['groups'] = $this->resolveGroups($connection, $entry, $userDn);
+
+            return $identity;
         } finally {
             ldap_unbind($connection);
         }
@@ -120,12 +126,14 @@ class LdapAuthenticator
         $filter = str_replace('{username}', $this->escapeFilterValue($username), $filterTemplate);
 
         $map = config('auth_integrations.ldap.attribute_map', []);
+        $groupAttribute = (string) config('auth_integrations.ldap.group_attribute', 'memberOf');
         $attributes = array_values(array_unique(array_filter([
             'dn',
             $map['external_id'] ?? 'entryUUID',
             $map['email'] ?? 'mail',
             $map['name'] ?? 'cn',
             $map['username'] ?? 'uid',
+            $groupAttribute,
         ])));
 
         $search = @ldap_search($connection, $baseDn, $filter, $attributes);
@@ -189,6 +197,59 @@ class LdapAuthenticator
         }
 
         return '';
+    }
+
+    /**
+     * @param  \LDAP\Connection|resource  $connection
+     * @param  array<string, mixed>  $entry
+     * @return list<string>
+     */
+    private function resolveGroups(mixed $connection, array $entry, string $userDn): array
+    {
+        $groups = [];
+        $groupAttribute = (string) config('auth_integrations.ldap.group_attribute', 'memberOf');
+
+        $memberOf = $entry[strtolower($groupAttribute)] ?? $entry[$groupAttribute] ?? null;
+
+        if (is_array($memberOf)) {
+            foreach ($memberOf as $key => $value) {
+                if ($key === 'count' || ! is_string($value) || $value === '') {
+                    continue;
+                }
+
+                $groups[] = $value;
+            }
+        }
+
+        $groupFilter = (string) config('auth_integrations.ldap.group_filter', '');
+
+        if ($groupFilter !== '') {
+            $filter = str_replace('{dn}', $this->escapeFilterValue($userDn), $groupFilter);
+            $baseDn = (string) config('auth_integrations.ldap.base_dn');
+            $search = @ldap_search($connection, $baseDn, $filter, ['cn', 'dn']);
+
+            if ($search !== false) {
+                $entries = ldap_get_entries($connection, $search);
+
+                if (is_array($entries)) {
+                    for ($i = 0; $i < ($entries['count'] ?? 0); $i++) {
+                        $groupEntry = $entries[$i];
+                        $cn = $this->attribute($groupEntry, 'cn');
+                        $dn = is_string($groupEntry['dn'] ?? null) ? $groupEntry['dn'] : '';
+
+                        if ($cn !== '') {
+                            $groups[] = $cn;
+                        }
+
+                        if ($dn !== '') {
+                            $groups[] = $dn;
+                        }
+                    }
+                }
+            }
+        }
+
+        return array_values(array_unique($groups));
     }
 
     private function escapeFilterValue(string $value): string

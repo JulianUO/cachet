@@ -2,6 +2,7 @@
 
 use App\Providers\AppServiceProvider;
 use App\Providers\AuthIntegrationServiceProvider;
+use App\Providers\AuthorizationServiceProvider;
 use Cachet\CachetCoreServiceProvider;
 use Cachet\CachetDashboardServiceProvider;
 
@@ -20,4 +21,5 @@ return [
     CachetDashboardServiceProvider::class,
     // After the Cachet Filament panel so we can replace login and add pages.
     AuthIntegrationServiceProvider::class,
+    AuthorizationServiceProvider::class,
 ];

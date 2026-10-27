@@ -12,8 +12,11 @@
 namespace App\Filament\Pages\Integrations;
 
 use App\Auth\AuthIntegrations;
+use App\Auth\Permission;
+use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Admin view of authentication integration status.
@@ -43,7 +46,10 @@ class ManageAuthentication extends Page
 
     public static function canAccess(): bool
     {
-        return auth()->user()?->isAdmin() ?? false;
+        $user = Auth::user();
+
+        return $user instanceof User
+            && ($user->isAdmin() || $user->hasPermission(Permission::AuthIntegrationsManage));
     }
 
     /**
