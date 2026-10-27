@@ -37,12 +37,16 @@ class SlackClient
      */
     private function sendWebhook(array $message): array
     {
-        $url = (string) config('slack_notifications.webhook_url');
+        $url = SlackNotifications::webhookUrl();
+
+        if ($url === null) {
+            throw new RuntimeException('Slack webhook URL is not configured.');
+        }
 
         $payload = array_filter([
             'text' => $message['text'],
-            'username' => config('slack_notifications.username'),
-            'icon_emoji' => config('slack_notifications.icon_emoji'),
+            'username' => SlackNotifications::username(),
+            'icon_emoji' => SlackNotifications::iconEmoji(),
             'blocks' => $message['blocks'] ?? null,
             'attachments' => $message['attachments'] ?? null,
         ], fn ($value) => $value !== null);
@@ -57,7 +61,6 @@ class SlackClient
         }
 
         $body = trim($response->body());
-        // Incoming webhooks respond with plain-text "ok" on success.
         $ok = $response->successful() && ($body === 'ok' || $response->json('ok') === true);
 
         if (! $ok) {
@@ -73,14 +76,18 @@ class SlackClient
      */
     private function sendBot(array $message): array
     {
-        $token = (string) config('slack_notifications.bot_token');
-        $channel = (string) config('slack_notifications.channel');
+        $token = SlackNotifications::botToken();
+        $channel = SlackNotifications::channel();
+
+        if ($token === null || $channel === null) {
+            throw new RuntimeException('Slack bot token or channel is not configured.');
+        }
 
         $payload = array_filter([
             'channel' => $channel,
             'text' => $message['text'],
-            'username' => config('slack_notifications.username'),
-            'icon_emoji' => config('slack_notifications.icon_emoji'),
+            'username' => SlackNotifications::username(),
+            'icon_emoji' => SlackNotifications::iconEmoji(),
             'blocks' => $message['blocks'] ?? null,
             'attachments' => $message['attachments'] ?? null,
         ], fn ($value) => $value !== null);
