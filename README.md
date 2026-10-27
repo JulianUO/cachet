@@ -19,6 +19,8 @@
 
 Cachet, the open source self-hosted status page system.
 
+This repository is a **fork** of the official [Cachet](https://github.com/cachethq/cachet) project. It is **not** an official Cachet product and is **not** affiliated with, endorsed by, or sponsored by Alt Three Services Limited, Cachet Inc., or the Cachet maintainers. We are grateful to **James Brooks**, **Alt Three Services Limited**, and the [CachetHQ](https://github.com/cachethq) community for building and maintaining Cachet.
+
 ## Main branch: `3.x`
 
 This fork’s default development branch is **[`3.x`](https://github.com/JulianUO/cachet/tree/3.x)**. Open PRs against `3.x`.
@@ -69,6 +71,16 @@ Operator docs live in **[`docs/`](docs/README.md)**.
     <a href="https://coderabbit.ai/"><img width="100px" src="https://github.com/coderabbitai.png" alt="Code Rabbit"></a>
     <a href="https://scramble.dedoc.co/"><img width="100px" src="https://github.com/dedoc.png" alt="de:doc"></a>
 </p>
+
+## Credits, license, and trademarks
+
+Deep thanks to the original authors and maintainers of Cachet — especially **James Brooks** and **Alt Three Services Limited** — and to everyone who contributes upstream at [cachethq/cachet](https://github.com/cachethq/cachet) and [cachethq/core](https://github.com/cachethq/core).
+
+This software remains under the **Cachet license** from Alt Three Services Limited. A verbatim copy ships in [`LICENSE.md`](LICENSE.md). Copyright notices in source files must be preserved. Distributions of this software must include that license and pass along its warranty disclaimer and limitation of liability.
+
+**Cachet** names and logos are trademarks of Cachet / Alt Three (see [`TRADEMARKS.md`](TRADEMARKS.md)). This fork does not claim those marks. Use of Cachet trademarks must follow the upstream [trademark policy](https://github.com/cachethq/core/blob/main/TRADEMARKS.md). Truthful statements such as “derived from the Cachet software” or “powered by Cachet” are fine; do not imply official endorsement.
+
+Operator summary: [`docs/license-and-attribution.md`](docs/license-and-attribution.md).
 
 ## Security Vulnerabilities
 
