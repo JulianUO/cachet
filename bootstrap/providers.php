@@ -3,6 +3,7 @@
 use App\Providers\AppServiceProvider;
 use App\Providers\AuthIntegrationServiceProvider;
 use App\Providers\AuthorizationServiceProvider;
+use App\Providers\SlackNotificationServiceProvider;
 use Cachet\CachetCoreServiceProvider;
 use Cachet\CachetDashboardServiceProvider;
 
@@ -22,4 +23,5 @@ return [
     // After the Cachet Filament panel so we can replace login and add pages.
     AuthIntegrationServiceProvider::class,
     AuthorizationServiceProvider::class,
+    SlackNotificationServiceProvider::class,
 ];
