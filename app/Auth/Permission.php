@@ -40,7 +40,9 @@ enum Permission: string
 
     public function label(): string
     {
-        return (string) (config('authorization.permissions')[$this->value] ?? $this->value);
+        $label = config('authorization.permissions')[$this->value] ?? $this->value;
+
+        return __((string) $label);
     }
 
     /**
@@ -48,6 +50,12 @@ enum Permission: string
      */
     public static function options(): array
     {
-        return config('authorization.permissions', []);
+        $options = [];
+
+        foreach (config('authorization.permissions', []) as $permission => $label) {
+            $options[$permission] = __((string) $label);
+        }
+
+        return $options;
     }
 }

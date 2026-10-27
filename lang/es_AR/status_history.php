@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'title' => 'Historial',
+    'uptime_over_past_days' => 'Disponibilidad de los últimos :days días',
+    'days_ago' => 'Hace :days días',
+    'today' => 'Hoy',
+    'view_calendar' => 'Historial en calendario',
+    'view_on_calendar' => 'Ver en el calendario',
+    'view_timeline' => 'Línea de tiempo de incidentes',
+    'month_heading' => ':month',
+    'previous_month' => 'Mes anterior',
+    'next_month' => 'Mes siguiente',
+    'no_events' => 'No hay incidentes ni mantenimiento en este día.',
+    'day_events' => 'Eventos del :date',
+    'incidents' => 'Incidentes',
+    'maintenance' => 'Mantenimiento',
+    'had_partial_outage' => 'Este componente tuvo una interrupción parcial.',
+    'had_major_outage' => 'Este componente tuvo una interrupción mayor.',
+    'had_maintenance' => 'Este componente estuvo en mantenimiento.',
+    'components_had_outage' => ':count componente tuvo una interrupción parcial|:count componentes tuvieron una interrupción parcial',
+    'legend_operational' => 'Operativo',
+    'legend_disrupted' => 'Incidente o mantenimiento',
+    'legend_empty' => 'Sin eventos',
+];

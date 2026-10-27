@@ -17,17 +17,17 @@ class SlackMessageBuilder
      */
     public function incidentCreated(Incident $incident): array
     {
-        $status = $incident->status?->getLabel() ?? 'Unknown';
+        $status = $incident->status?->getLabel() ?? __('Unknown');
         $url = $this->incidentUrl($incident);
         $components = $this->componentNames($incident);
 
         return $this->message(
-            text: "Incident: {$incident->name} ({$status})",
-            title: 'New incident',
+            text: __('Incident: :name (:status)', ['name' => $incident->name, 'status' => $status]),
+            title: __('New incident'),
             fields: [
-                'Incident' => $incident->name,
-                'Status' => $status,
-                'Components' => $components,
+                __('Incident') => $incident->name,
+                __('Status') => $status,
+                __('Components') => $components,
             ],
             url: $url,
             color: $this->incidentColor($incident),
@@ -39,20 +39,20 @@ class SlackMessageBuilder
      */
     public function incidentUpdated(Incident $incident, ?Update $update = null): array
     {
-        $status = $update?->status?->getLabel() ?? $incident->status?->getLabel() ?? 'Updated';
+        $status = $update?->status?->getLabel() ?? $incident->status?->getLabel() ?? __('Updated');
         $url = $this->incidentUrl($incident);
         $detail = $update?->message
             ? Str::limit(strip_tags($update->formattedMessage()), 280)
             : Str::limit(strip_tags((string) $incident->message), 280);
 
         return $this->message(
-            text: "Incident update: {$incident->name} ({$status})",
-            title: 'Incident updated',
+            text: __('Incident update: :name (:status)', ['name' => $incident->name, 'status' => $status]),
+            title: __('Incident updated'),
             fields: [
-                'Incident' => $incident->name,
-                'Status' => $status,
-                'Details' => $detail !== '' ? $detail : '—',
-                'Components' => $this->componentNames($incident),
+                __('Incident') => $incident->name,
+                __('Status') => $status,
+                __('Details') => $detail !== '' ? $detail : '—',
+                __('Components') => $this->componentNames($incident),
             ],
             url: $url,
             color: $this->incidentColor($incident),
@@ -70,12 +70,15 @@ class SlackMessageBuilder
         $url = url(Cachet::path());
 
         return $this->message(
-            text: "Component status: {$component->name} is now {$newStatus->getLabel()}",
-            title: 'Component status changed',
+            text: __('Component status: :name is now :status', [
+                'name' => $component->name,
+                'status' => $newStatus->getLabel(),
+            ]),
+            title: __('Component status changed'),
             fields: [
-                'Component' => $component->name,
-                'Previous' => $oldStatus?->getLabel() ?? '—',
-                'Current' => $newStatus->getLabel(),
+                __('Component') => $component->name,
+                __('Previous') => $oldStatus?->getLabel() ?? '—',
+                __('Current') => $newStatus->getLabel(),
             ],
             url: $url,
             color: $this->componentColor($newStatus),
@@ -88,13 +91,13 @@ class SlackMessageBuilder
     public function scheduleCreated(Schedule $schedule): array
     {
         return $this->message(
-            text: "Maintenance scheduled: {$schedule->name}",
-            title: 'Maintenance scheduled',
+            text: __('Maintenance scheduled: :name', ['name' => $schedule->name]),
+            title: __('Maintenance scheduled'),
             fields: [
-                'Maintenance' => $schedule->name,
-                'Starts' => $schedule->scheduled_at?->toDayDateTimeString() ?? '—',
-                'Ends' => $schedule->completed_at?->toDayDateTimeString() ?? '—',
-                'Components' => $this->componentNames($schedule),
+                __('Maintenance') => $schedule->name,
+                __('Starts') => $schedule->scheduled_at?->toDayDateTimeString() ?? '—',
+                __('Ends') => $schedule->completed_at?->toDayDateTimeString() ?? '—',
+                __('Components') => $this->componentNames($schedule),
             ],
             url: $this->scheduleUrl($schedule),
             color: '#f97316',
@@ -107,24 +110,24 @@ class SlackMessageBuilder
     public function scheduleUpdated(Schedule $schedule, ?Update $update = null, ?string $reason = null): array
     {
         $title = match ($reason) {
-            'completed' => 'Maintenance completed',
-            'rescheduled' => 'Maintenance rescheduled',
-            default => 'Maintenance updated',
+            'completed' => __('Maintenance completed'),
+            'rescheduled' => __('Maintenance rescheduled'),
+            default => __('Maintenance updated'),
         };
 
         $detail = $update?->message
             ? Str::limit(strip_tags($update->formattedMessage()), 280)
-            : ($reason === 'completed' ? 'Maintenance window finished.' : '—');
+            : ($reason === 'completed' ? __('Maintenance window finished.') : '—');
 
         return $this->message(
             text: "{$title}: {$schedule->name}",
             title: $title,
             fields: [
-                'Maintenance' => $schedule->name,
-                'Starts' => $schedule->scheduled_at?->toDayDateTimeString() ?? '—',
-                'Ends' => $schedule->completed_at?->toDayDateTimeString() ?? '—',
-                'Details' => $detail,
-                'Components' => $this->componentNames($schedule),
+                __('Maintenance') => $schedule->name,
+                __('Starts') => $schedule->scheduled_at?->toDayDateTimeString() ?? '—',
+                __('Ends') => $schedule->completed_at?->toDayDateTimeString() ?? '—',
+                __('Details') => $detail,
+                __('Components') => $this->componentNames($schedule),
             ],
             url: $this->scheduleUrl($schedule),
             color: $reason === 'completed' ? '#22c55e' : '#f97316',
@@ -166,7 +169,7 @@ class SlackMessageBuilder
                             'type' => 'button',
                             'text' => [
                                 'type' => 'plain_text',
-                                'text' => 'View on status page',
+                                'text' => __('View on status page'),
                             ],
                             'url' => $url,
                         ],
@@ -177,7 +180,7 @@ class SlackMessageBuilder
                     'elements' => [
                         [
                             'type' => 'mrkdwn',
-                            'text' => 'Sent by Cachet native Slack notifications · color hint `'.$color.'`',
+                            'text' => __('Sent by Cachet native Slack notifications · color hint `:color`', ['color' => $color]),
                         ],
                     ],
                 ],

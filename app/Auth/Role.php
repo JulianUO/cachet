@@ -21,10 +21,10 @@ enum Role: string
     public function label(): string
     {
         return match ($this) {
-            self::PublicViewer => 'Public viewer',
-            self::RegisteredViewer => 'Registered viewer',
-            self::ItSupport => 'IT support',
-            self::DevOps => 'DevOps',
+            self::PublicViewer => __('Public viewer'),
+            self::RegisteredViewer => __('Registered viewer'),
+            self::ItSupport => __('IT support'),
+            self::DevOps => __('DevOps'),
         };
     }
 

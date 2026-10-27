@@ -27,7 +27,17 @@
                 </div>
                 <div class="flex justify-between gap-4">
                     <dt class="text-gray-500 dark:text-gray-400">{{ __('Active delivery methods') }}</dt>
-                    <dd class="font-medium">{{ $status['delivery_methods'] ? implode(', ', $status['delivery_methods']) : '—' }}</dd>
+                    <dd class="font-medium">
+                        @if ($status['delivery_methods'])
+                            {{ collect($status['delivery_methods'])->map(fn (string $method): string => match ($method) {
+                                'incoming_webhook' => __('Incoming webhook'),
+                                'bot_token' => __('Bot token + channel'),
+                                default => $method,
+                            })->implode(', ') }}
+                        @else
+                            —
+                        @endif
+                    </dd>
                 </div>
                 <div class="flex justify-between gap-4">
                     <dt class="text-gray-500 dark:text-gray-400">{{ __('Incoming webhook') }}</dt>
