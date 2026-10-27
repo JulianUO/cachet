@@ -11,8 +11,11 @@
 
 namespace App\Providers;
 
+use App\Auth\AppliesAuthIntegrationSettings;
 use App\Filament\Auth\Login;
 use App\Filament\Pages\Integrations\ManageAuthentication;
+use App\Filament\Pages\Integrations\ManageMail;
+use App\Mail\AppliesMailTransportSettings;
 use Filament\PanelRegistry;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -42,6 +45,7 @@ class AuthIntegrationServiceProvider extends ServiceProvider
                 ->login(Login::class)
                 ->pages([
                     ManageAuthentication::class,
+                    ManageMail::class,
                 ]);
         });
     }
@@ -55,8 +59,20 @@ class AuthIntegrationServiceProvider extends ServiceProvider
         // register our replacements with the same names Livewire/Filament expect.
         Livewire::component(Login::class, Login::class);
         Livewire::component(ManageAuthentication::class, ManageAuthentication::class);
+        Livewire::component(ManageMail::class, ManageMail::class);
 
         Route::middleware('web')
             ->group(base_path('routes/auth.php'));
+
+        // Overlay dashboard auth settings after the app is fully booted so
+        // migrations (and the settings table) are available in HTTP / artisan.
+        $this->app->booted(function (): void {
+            AppliesAuthIntegrationSettings::apply();
+        });
+
+        // Enrich core MailSettings override with SMTP encryption from the dashboard.
+        $this->callAfterResolving('mail.manager', function (): void {
+            AppliesMailTransportSettings::apply();
+        });
     }
 }

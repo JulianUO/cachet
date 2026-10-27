@@ -13,6 +13,8 @@ namespace App\Http\Middleware;
 
 use App\Auth\Permission;
 use App\Filament\Pages\Integrations\ManageAuthentication;
+use App\Filament\Pages\Integrations\ManageMail;
+use App\Filament\Pages\Integrations\ManageSlackNotifications;
 use App\Filament\Pages\Settings\ManageAuthorization;
 use App\Models\User;
 use Cachet\Filament\Pages\Integrations\OhDear;
@@ -39,6 +41,8 @@ class EnforceDashboardPermissions
         ManageNotifications::class => Permission::SettingsManage,
         ManageTheme::class => Permission::SettingsManage,
         OhDear::class => Permission::SettingsManage,
+        ManageMail::class => Permission::SettingsManage,
+        ManageSlackNotifications::class => Permission::SettingsManage,
         ManageAuthentication::class => Permission::AuthIntegrationsManage,
         ManageAuthorization::class => Permission::AuthorizationManage,
     ];
