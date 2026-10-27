@@ -65,7 +65,7 @@ return [
         Permission::ApiWrite->value => 'Create write-capable API tokens',
         Permission::UsersManage->value => 'Manage users',
         Permission::SettingsManage->value => 'Manage settings',
-        Permission::AuthIntegrationsManage->value => 'View auth integrations',
+        Permission::AuthIntegrationsManage->value => 'Manage auth integrations',
         Permission::AuthorizationManage->value => 'Edit permission matrix',
     ],
 

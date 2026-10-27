@@ -13,6 +13,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Dashboard vs environment
+    |--------------------------------------------------------------------------
+    |
+    | Preferred setup path: Integrations → Authentication in the admin
+    | dashboard (Spatie settings). Environment variables below are optional
+    | bootstrap only (e.g. before the first admin can log in). After the
+    | authentication settings page is saved once, dashboard values win and
+    | override these env defaults at runtime.
+    |
+    */
+
+    /*
+    |--------------------------------------------------------------------------
     | Local password authentication
     |--------------------------------------------------------------------------
     |
@@ -37,6 +50,8 @@ return [
     |
     | Callback URL to register with the IdP:
     |   {APP_URL}/auth/oidc/callback
+    |
+    | Prefer configuring these in the dashboard after first login.
     |
     */
     'oidc' => [

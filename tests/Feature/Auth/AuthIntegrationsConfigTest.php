@@ -48,7 +48,9 @@ it('allows admins to view the authentication integrations page', function (): vo
     Livewire::test(ManageAuthentication::class)
         ->assertSuccessful()
         ->assertSee('OpenID Connect')
-        ->assertSee('LDAP');
+        ->assertSee('LDAP')
+        ->assertSee('Enable OIDC')
+        ->assertSee('Enable LDAP');
 });
 
 it('stores external users without a local password', function (): void {

@@ -3,13 +3,35 @@
 @endphp
 
 <x-filament-panels::page>
-    <div class="space-y-6">
+    <form wire:submit="save" class="space-y-6">
+        {{ $this->form }}
+
+        <div class="flex justify-end">
+            <x-filament::button type="submit">
+                {{ __('Save authentication settings') }}
+            </x-filament::button>
+        </div>
+    </form>
+
+    <div class="mt-8 space-y-6">
         <x-filament::section>
-            <x-slot name="heading">{{ __('Local authentication') }}</x-slot>
+            <x-slot name="heading">{{ __('Effective status') }}</x-slot>
             <x-slot name="description">
-                {{ __('Email/password users stored in Cachet. Controlled by AUTH_LOCAL_ENABLED (default true).') }}
+                {{ __('Readiness after saved settings. Secrets are never shown here.') }}
             </x-slot>
 
+            <dl class="grid gap-3 text-sm">
+                <div class="flex justify-between gap-4">
+                    <dt class="text-gray-500 dark:text-gray-400">{{ __('Config source') }}</dt>
+                    <dd class="font-medium">
+                        {{ $status['source'] === 'dashboard' ? __('Dashboard (wins over env)') : __('Environment bootstrap') }}
+                    </dd>
+                </div>
+            </dl>
+        </x-filament::section>
+
+        <x-filament::section>
+            <x-slot name="heading">{{ __('Local authentication') }}</x-slot>
             <dl class="grid gap-3 text-sm">
                 <div class="flex justify-between gap-4">
                     <dt class="text-gray-500 dark:text-gray-400">{{ __('Status') }}</dt>
@@ -20,10 +42,6 @@
 
         <x-filament::section>
             <x-slot name="heading">{{ __('OpenID Connect (OIDC)') }}</x-slot>
-            <x-slot name="description">
-                {{ __('Keycloak-compatible OIDC via OIDC_* environment variables. Callback must be registered with the IdP.') }}
-            </x-slot>
-
             <dl class="grid gap-3 text-sm">
                 <div class="flex justify-between gap-4">
                     <dt class="text-gray-500 dark:text-gray-400">{{ __('Status') }}</dt>
@@ -32,6 +50,10 @@
                 <div class="flex justify-between gap-4">
                     <dt class="text-gray-500 dark:text-gray-400">{{ __('Credentials') }}</dt>
                     <dd class="font-medium">{{ $status['oidc']['configured'] ? __('Configured') : __('Missing') }}</dd>
+                </div>
+                <div class="flex justify-between gap-4">
+                    <dt class="text-gray-500 dark:text-gray-400">{{ __('Client secret') }}</dt>
+                    <dd class="font-medium">{{ $status['oidc']['secret_configured'] ? __('Saved') : __('Not set') }}</dd>
                 </div>
                 <div class="flex justify-between gap-4">
                     <dt class="text-gray-500 dark:text-gray-400">{{ __('Issuer') }}</dt>
@@ -54,10 +76,6 @@
 
         <x-filament::section>
             <x-slot name="heading">{{ __('LDAP') }}</x-slot>
-            <x-slot name="description">
-                {{ __('Bind + search authentication via LDAP_* environment variables. Uses the dashboard login form.') }}
-            </x-slot>
-
             <dl class="grid gap-3 text-sm">
                 <div class="flex justify-between gap-4">
                     <dt class="text-gray-500 dark:text-gray-400">{{ __('Status') }}</dt>
@@ -66,6 +84,10 @@
                 <div class="flex justify-between gap-4">
                     <dt class="text-gray-500 dark:text-gray-400">{{ __('Connection') }}</dt>
                     <dd class="font-medium">{{ $status['ldap']['configured'] ? __('Configured') : __('Missing') }}</dd>
+                </div>
+                <div class="flex justify-between gap-4">
+                    <dt class="text-gray-500 dark:text-gray-400">{{ __('Bind password') }}</dt>
+                    <dd class="font-medium">{{ $status['ldap']['secret_configured'] ? __('Saved') : __('Not set') }}</dd>
                 </div>
                 <div class="flex justify-between gap-4">
                     <dt class="text-gray-500 dark:text-gray-400">{{ __('Host') }}</dt>
