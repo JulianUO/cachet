@@ -11,6 +11,7 @@
 
 namespace App\Auth\Oidc;
 
+use App\Auth\ExternalGroupExtractor;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -101,7 +102,7 @@ class OidcClient
             'external_id' => (string) data_get($claims, $map['external_id'] ?? 'sub', ''),
             'email' => (string) data_get($claims, $map['email'] ?? 'email', ''),
             'name' => data_get($claims, $map['name'] ?? 'name'),
-            'groups' => app(\App\Auth\ExternalGroupExtractor::class)->fromOidcClaims($claims),
+            'groups' => app(ExternalGroupExtractor::class)->fromOidcClaims($claims),
             'claims' => $claims,
         ];
     }

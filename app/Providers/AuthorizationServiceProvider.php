@@ -14,6 +14,7 @@ namespace App\Providers;
 use App\Auth\Permission;
 use App\Filament\Pages\Settings\ManageAuthorization;
 use App\Http\Middleware\EnforceDashboardPermissions;
+use App\Models\User;
 use App\Policies\ComponentGroupPolicy;
 use App\Policies\ComponentPolicy;
 use App\Policies\IncidentPolicy;
@@ -86,7 +87,7 @@ class AuthorizationServiceProvider extends ServiceProvider
         Gate::policy(WebhookSubscription::class, WebhookSubscriptionPolicy::class);
         Gate::policy(PersonalAccessToken::class, PersonalAccessTokenPolicy::class);
         Gate::policy(CachetUser::class, UserPolicy::class);
-        Gate::policy(\App\Models\User::class, UserPolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
 
         Cachet::authorizeDashboardFeatureUsing('themes', function (): bool {
             $user = auth()->user();

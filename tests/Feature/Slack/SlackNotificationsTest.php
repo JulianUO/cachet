@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Settings\SlackNotificationSettings;
 use App\Slack\SlackDeliveryLog;
 use App\Slack\SlackNotifications;
+use App\Slack\SlackNotifier;
 use Cachet\Actions\Component\ChangeComponentStatus;
 use Cachet\Actions\Incident\CreateIncident;
 use Cachet\Actions\Schedule\CreateSchedule;
@@ -182,7 +183,7 @@ it('records delivery failures without leaking secrets', function () {
         'status' => ComponentStatusEnum::operational,
     ]);
 
-    app(\App\Slack\SlackNotifier::class)->componentStatusChanged(
+    app(SlackNotifier::class)->componentStatusChanged(
         $component,
         ComponentStatusEnum::operational,
         ComponentStatusEnum::partial_outage,

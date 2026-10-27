@@ -161,7 +161,7 @@ class ManageAuthorization extends Page implements HasTable
                     ->formatStateUsing(fn (bool $state): string => $state ? __('Yes') : __('No')),
             ])
             ->recordActions([
-                \Filament\Actions\Action::make('assignRole')
+                Action::make('assignRole')
                     ->label(__('Assign role'))
                     ->icon(Heroicon::OutlinedUserCircle)
                     ->visible(fn (User $record): bool => ! $record->isAdmin())

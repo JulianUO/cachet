@@ -218,7 +218,7 @@ class Login extends BaseLogin
         return $actions;
     }
 
-    public function getSubheading(): string | Htmlable | null
+    public function getSubheading(): string|Htmlable|null
     {
         $errors = session('errors');
 

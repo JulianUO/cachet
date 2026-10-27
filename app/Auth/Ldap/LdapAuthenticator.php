@@ -11,6 +11,7 @@
 
 namespace App\Auth\Ldap;
 
+use LDAP\Connection;
 use RuntimeException;
 
 class LdapAuthenticator
@@ -64,7 +65,7 @@ class LdapAuthenticator
     }
 
     /**
-     * @return \LDAP\Connection|resource
+     * @return Connection|resource
      */
     private function connect(): mixed
     {
@@ -95,7 +96,7 @@ class LdapAuthenticator
     }
 
     /**
-     * @param  \LDAP\Connection|resource  $connection
+     * @param  Connection|resource  $connection
      */
     private function serviceBind(mixed $connection): void
     {
@@ -116,7 +117,7 @@ class LdapAuthenticator
     }
 
     /**
-     * @param  \LDAP\Connection|resource  $connection
+     * @param  Connection|resource  $connection
      * @return array<string, mixed>|null
      */
     private function searchUser(mixed $connection, string $username): ?array
@@ -200,7 +201,7 @@ class LdapAuthenticator
     }
 
     /**
-     * @param  \LDAP\Connection|resource  $connection
+     * @param  Connection|resource  $connection
      * @param  array<string, mixed>  $entry
      * @return list<string>
      */
