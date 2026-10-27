@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b29f2611c3146eb04ac00060a038ef32",
+    "content-hash": "88bb77f5f5f08967f7fa92a44230d02b",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -502,13 +502,13 @@
             "version": "dev-main",
             "source": {
                 "type": "git",
-                "url": "https://github.com/cachethq/core.git",
-                "reference": "c5f06fe8d8e2b83652c6f9632eb48414fb4be160"
+                "url": "https://github.com/JulianUO/cachet-core.git",
+                "reference": "fdd28cfed0a4c213e9b14399756a24fc4e74952e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cachethq/core/zipball/c5f06fe8d8e2b83652c6f9632eb48414fb4be160",
-                "reference": "c5f06fe8d8e2b83652c6f9632eb48414fb4be160",
+                "url": "https://api.github.com/repos/JulianUO/cachet-core/zipball/fdd28cfed0a4c213e9b14399756a24fc4e74952e",
+                "reference": "fdd28cfed0a4c213e9b14399756a24fc4e74952e",
                 "shasum": ""
             },
             "require": {
@@ -526,8 +526,9 @@
                 "illuminate/support": "^12.41.1|^13.0",
                 "laravel/mcp": "^0.8",
                 "laravel/sanctum": "^4.0",
+                "livewire/livewire": "^4.4.8",
                 "nesbot/carbon": "^2.70|^3.0",
-                "php": "^8.3",
+                "php": "^8.3.36 || ^8.4.27 || ^8.5.12",
                 "spatie/laravel-data": "^4.11",
                 "spatie/laravel-query-builder": "^6.3",
                 "spatie/laravel-settings": "^3.2",
@@ -551,24 +552,68 @@
             "default-branch": true,
             "type": "library",
             "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                },
                 "laravel": {
                     "providers": [
                         "Cachet\\CachetCoreServiceProvider",
                         "Cachet\\CachetDashboardServiceProvider"
                     ]
-                },
-                "branch-alias": {
-                    "dev-master": "3.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
                     "Cachet\\": "src",
-                    "Cachet\\Database\\Seeders\\": "database/seeders",
-                    "Cachet\\Database\\Factories\\": "database/factories"
+                    "Cachet\\Database\\Factories\\": "database/factories",
+                    "Cachet\\Database\\Seeders\\": "database/seeders"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Cachet\\Database\\Factories\\": "database/factories",
+                    "Cachet\\Tests\\": "tests",
+                    "Workbench\\App\\": "workbench/app/",
+                    "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+                    "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+                }
+            },
+            "scripts": {
+                "post-autoload-dump": [
+                    "@prepare"
+                ],
+                "build": [
+                    "@prepare",
+                    "@clear",
+                    "@php vendor/bin/testbench workbench:build"
+                ],
+                "canvas": [
+                    "@php vendor/bin/canvas"
+                ],
+                "clear": [
+                    "@php vendor/bin/testbench package:purge-skeleton --ansi"
+                ],
+                "dev": [
+                    "@build",
+                    "Composer\\Config::disableProcessTimeout",
+                    "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php vendor/bin/testbench serve\" \"php vendor/bin/testbench queue:listen --tries=1\" \"php vendor/bin/testbench pail\" \"npm run dev\" --names=server,queue,logs,vite"
+                ],
+                "prepare": [
+                    "@php vendor/bin/testbench package:discover --ansi"
+                ],
+                "start": [
+                    "@dev"
+                ],
+                "test:lint": [
+                    "pint --test"
+                ],
+                "test:unit": [
+                    "pest --parallel --processes=10 --passthru-php=\"'-d' 'memory_limit=512M'\" --ci --compact"
+                ],
+                "test": [
+                    "@test:unit"
+                ]
+            },
             "license": [
                 "proprietary"
             ],
@@ -586,10 +631,10 @@
                 "status page"
             ],
             "support": {
-                "issues": "https://github.com/cachethq/core/issues",
-                "source": "https://github.com/cachethq/core"
+                "issues": "https://github.com/JulianUO/cachet-core/issues",
+                "source": "https://github.com/JulianUO/cachet-core"
             },
-            "time": "2026-10-22T11:10:40+00:00"
+            "time": "2026-10-27T14:54:11+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",

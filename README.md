@@ -41,6 +41,8 @@ Beyond Cachet 3.x core, operators get:
 
 Operator docs live in **[`docs/`](docs/README.md)**.
 
+This app resolves Composer package `cachethq/core` from **[`JulianUO/cachet-core`](https://github.com/JulianUO/cachet-core)** (fork of [`cachethq/core`](https://github.com/cachethq/core)), not from Packagist alone — see [`docs/cachet-core.md`](docs/cachet-core.md).
+
 ## Requirements
 
 - PHP **8.3.36+**, **8.4.27+**, or **8.5.12+** (required for CVE-2026-109618 / CVE-2026-109619)
