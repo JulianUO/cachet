@@ -36,7 +36,7 @@ Beyond Cachet 3.x core, operators get:
 - **Permission matrix** — roles mapped from IdP/LDAP groups
 - **Slack notifications** — native channel posts (preferred over `/slack.rss`)
 - **Integrations UI** — Mail, OIDC/LDAP, and Slack configured in the admin dashboard
-- **Docker** — production-oriented `Dockerfile` + `docker-compose.yml`
+- **Docker** — production-oriented `Dockerfile` + `docker-compose.yml`, with CI build/push to Docker Hub
 - **Spanish (Argentina)** — `es_AR` locale for the status page and new admin UI
 
 Operator docs live in **[`docs/`](docs/README.md)**.
