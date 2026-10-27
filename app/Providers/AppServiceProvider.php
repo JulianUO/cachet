@@ -11,8 +11,10 @@
 
 namespace App\Providers;
 
+use App\View\Components\SystemStatus;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
@@ -40,7 +42,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->app->booted(function (): void {
+            Blade::component('cachet::system-status', SystemStatus::class);
+        });
 
         $this->bootRoute();
     }
