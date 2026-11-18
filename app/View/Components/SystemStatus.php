@@ -9,6 +9,7 @@ use Cachet\Models\ComponentGroup;
 use Cachet\Models\ComponentStatusChange;
 use Cachet\Models\Incident;
 use Cachet\Models\Schedule;
+use Cachet\Settings\AppSettings;
 use Carbon\CarbonInterface;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,21 +27,23 @@ use Illuminate\View\View;
  * @phpstan-type ComponentDays Collection<string, ComponentStatusEnum>
  * @phpstan-type DayEvent array{label: string, status: ComponentStatusEnum, icon: string, url: string|null}
  * @phpstan-type DayEvents Collection<string, list<DayEvent>>
- * @phpstan-type ComponentRow array{model: Component, status: ComponentStatusEnum, days: ComponentDays, events: DayEvents, uptime: float|null, available_seconds: float, operational_seconds: float}
- * @phpstan-type GroupRow array{model: ComponentGroup, components: Collection<int, covariant ComponentRow>, days: StatusDays, events: DayEvents, uptime: float|null, available_seconds: float, operational_seconds: float}
+ * @phpstan-type DayDurations Collection<string, array<int, float>>
+ * @phpstan-type ComponentRow array{model: Component, status: ComponentStatusEnum, days: ComponentDays, durations: DayDurations, events: DayEvents, uptime: float|null, available_seconds: float, operational_seconds: float}
+ * @phpstan-type GroupRow array{model: ComponentGroup, components: Collection<int, covariant ComponentRow>, days: StatusDays, durations: DayDurations, events: DayEvents, uptime: float|null, available_seconds: float, operational_seconds: float}
  */
 class SystemStatus extends ViewComponent
 {
-    private const DAYS = 90;
+    private int $days;
 
     private Carbon $start;
 
     private Carbon $end;
 
-    public function __construct()
+    public function __construct(AppSettings $settings)
     {
+        $this->days = $settings->systemStatusDays();
         $this->end = now();
-        $this->start = $this->end->clone()->subDays(self::DAYS - 1)->startOfDay();
+        $this->start = $this->end->clone()->subDays($this->days - 1)->startOfDay();
     }
 
     public function render(): View|Closure|string
@@ -51,6 +54,7 @@ class SystemStatus extends ViewComponent
         );
 
         return view('cachet::components.system-status', [
+            'days' => $this->days,
             'from' => $this->start,
             'to' => $this->end,
             'groups' => $groups,
@@ -81,6 +85,7 @@ class SystemStatus extends ViewComponent
                     'model' => $group,
                     'components' => $components,
                     'days' => $this->aggregateDays($components),
+                    'durations' => $this->aggregateDurations($components),
                     'events' => $this->aggregateEvents($components),
                     ...$this->aggregateUptime($components),
                 ];
@@ -129,6 +134,7 @@ class SystemStatus extends ViewComponent
                     'model' => $component,
                     'status' => $this->statusAt($component, $this->end) ?? ComponentStatusEnum::unknown,
                     'days' => $uptime['days'],
+                    'durations' => $uptime['durations'],
                     'events' => $this->events($component, $uptime['days']),
                     'uptime' => $uptime['uptime'],
                     'available_seconds' => $uptime['available_seconds'],
@@ -145,13 +151,14 @@ class SystemStatus extends ViewComponent
     /**
      * Calculate daily severity and exact uptime from every effective status interval.
      *
-     * @return array{days: ComponentDays, uptime: float|null, available_seconds: float, operational_seconds: float}
+     * @return array{days: ComponentDays, durations: DayDurations, uptime: float|null, available_seconds: float, operational_seconds: float}
      */
     private function uptime(Component $component): array
     {
         $days = collect($this->start->toPeriod($this->end))
             ->keyBy(fn (Carbon $day): string => $day->toDateString())
             ->map(fn (): ComponentStatusEnum => $this->noDataStatus());
+        $durations = $days->map(fn (): array => []);
         $boundaries = collect([$this->start, $this->end, $component->created_at])
             ->merge($component->statusChanges->pluck('created_at'))
             ->merge($component->incidents->flatMap(fn (Incident $incident): array => [
@@ -171,7 +178,7 @@ class SystemStatus extends ViewComponent
         $availableSeconds = 0.0;
         $operationalSeconds = 0.0;
 
-        $boundaries->sliding(2)->each(function (Collection $interval) use ($component, $days, &$availableSeconds, &$operationalSeconds): void {
+        $boundaries->sliding(2)->each(function (Collection $interval) use ($component, $days, $durations, &$availableSeconds, &$operationalSeconds): void {
             [$from, $to] = $interval->values();
             $status = $this->statusAt($component, $from);
 
@@ -184,10 +191,17 @@ class SystemStatus extends ViewComponent
             $operationalSeconds += $status === ComponentStatusEnum::operational ? $seconds : 0;
             $date = $from->toDateString();
             $days->put($date, $this->worstStatus(collect([$days->get($date), $status])));
+
+            if ($status !== ComponentStatusEnum::operational && $seconds > 0) {
+                $dayDurations = $durations->get($date, []);
+                $dayDurations[$status->value] = ($dayDurations[$status->value] ?? 0.0) + $seconds;
+                $durations->put($date, $dayDurations);
+            }
         });
 
         return [
             'days' => $days,
+            'durations' => $durations,
             'uptime' => $availableSeconds > 0 ? ($operationalSeconds / $availableSeconds) * 100 : null,
             'available_seconds' => $availableSeconds,
             'operational_seconds' => $operationalSeconds,
@@ -324,6 +338,28 @@ class SystemStatus extends ViewComponent
         });
 
         return $days;
+    }
+
+    /**
+     * Longest time any component in the group spent in each non-operational status, per day.
+     *
+     * @param  Collection<int, covariant ComponentRow>  $components
+     * @return DayDurations
+     */
+    private function aggregateDurations(Collection $components): Collection
+    {
+        return collect($this->start->toPeriod($this->end))->mapWithKeys(function (Carbon $day) use ($components): array {
+            $date = $day->toDateString();
+            $durations = [];
+
+            foreach ($components as $component) {
+                foreach ($component['durations']->get($date, []) as $status => $seconds) {
+                    $durations[$status] = max($durations[$status] ?? 0.0, $seconds);
+                }
+            }
+
+            return [$date => $durations];
+        });
     }
 
     /**

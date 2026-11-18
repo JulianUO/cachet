@@ -22,4 +22,7 @@ return [
     'legend_operational' => 'Operational',
     'legend_disrupted' => 'Incident or maintenance',
     'legend_empty' => 'No events',
+    'no_downtime' => 'No downtime recorded on this day.',
+    'no_data_day' => 'No data exists for this day.',
+    'related' => 'Related',
 ];
