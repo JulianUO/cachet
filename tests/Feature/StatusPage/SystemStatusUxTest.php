@@ -117,3 +117,30 @@ it('keeps duration-based uptime calculations from core system status', function 
         ->assertOk()
         ->assertSee('99.99% uptime');
 });
+
+it('uses the configured number of system status days for bars and labels', function () {
+    Carbon::setTestNow('2026-09-30 12:00:00');
+
+    $settings = app(AppSettings::class);
+    $settings->display_system_status = true;
+    $settings->system_status_days = 30;
+    $settings->save();
+
+    $group = ComponentGroup::factory()->create(['name' => 'Payments']);
+    Component::factory()->create([
+        'name' => 'Online Payments',
+        'component_group_id' => $group->id,
+        'status' => ComponentStatusEnum::operational,
+        'created_at' => now()->subYear(),
+    ]);
+
+    $page = $this->get(route('cachet.status-page'))
+        ->assertOk()
+        ->assertSee('Uptime over the past 30 days')
+        ->assertSee('30 days ago')
+        ->assertDontSee('90 days ago')
+        ->getContent();
+
+    expect(substr_count($page, 'grid-template-columns: repeat(30,'))->toBe(2)
+        ->and($page)->not->toContain('grid-template-columns: repeat(90,');
+});

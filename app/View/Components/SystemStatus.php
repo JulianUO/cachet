@@ -9,6 +9,7 @@ use Cachet\Models\ComponentGroup;
 use Cachet\Models\ComponentStatusChange;
 use Cachet\Models\Incident;
 use Cachet\Models\Schedule;
+use Cachet\Settings\AppSettings;
 use Carbon\CarbonInterface;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,16 +32,17 @@ use Illuminate\View\View;
  */
 class SystemStatus extends ViewComponent
 {
-    private const DAYS = 90;
+    private int $days;
 
     private Carbon $start;
 
     private Carbon $end;
 
-    public function __construct()
+    public function __construct(AppSettings $settings)
     {
+        $this->days = $settings->systemStatusDays();
         $this->end = now();
-        $this->start = $this->end->clone()->subDays(self::DAYS - 1)->startOfDay();
+        $this->start = $this->end->clone()->subDays($this->days - 1)->startOfDay();
     }
 
     public function render(): View|Closure|string
@@ -51,6 +53,7 @@ class SystemStatus extends ViewComponent
         );
 
         return view('cachet::components.system-status', [
+            'days' => $this->days,
             'from' => $this->start,
             'to' => $this->end,
             'groups' => $groups,

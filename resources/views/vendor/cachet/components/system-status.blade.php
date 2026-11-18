@@ -5,7 +5,7 @@
             <h2 data-slot="title" class="font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">{{ __('cachet::system_status.title') }}</h2>
             <p class="text-sm text-zinc-500 dark:text-zinc-400">
                 <a href="{{ route('cachet.status-page.history') }}" class="text-accent-content underline-offset-2 hover:underline" data-slot="uptime-link">
-                    {{ __('status_history.uptime_over_past_days', ['days' => 90]) }}
+                    {{ __('status_history.uptime_over_past_days', ['days' => $days]) }}
                 </a>
             </p>
         </div>
@@ -41,7 +41,7 @@
                         @endforeach
                     </div>
                     <div data-slot="axis" x-show="! $disclosure.isOpen" class="mt-1.5 flex justify-between text-[11px] tracking-tight text-zinc-400 dark:text-zinc-500">
-                        <span>{{ __('status_history.days_ago', ['days' => 90]) }}</span>
+                        <span>{{ __('status_history.days_ago', ['days' => $days]) }}</span>
                         <span>{{ __('status_history.today') }}</span>
                     </div>
                 </button>
@@ -66,7 +66,7 @@
                                     @endforeach
                                 </div>
                                 <div data-slot="axis" class="mt-1.5 flex justify-between text-[11px] tracking-tight text-zinc-400 dark:text-zinc-500">
-                                    <span>{{ __('status_history.days_ago', ['days' => 90]) }}</span>
+                                    <span>{{ __('status_history.days_ago', ['days' => $days]) }}</span>
                                     <span>{{ __('status_history.today') }}</span>
                                 </div>
                             </div>
@@ -96,7 +96,7 @@
                     @endforeach
                 </div>
                 <div data-slot="axis" class="mt-1.5 flex justify-between text-[11px] tracking-tight text-zinc-400 dark:text-zinc-500">
-                    <span>{{ __('status_history.days_ago', ['days' => 90]) }}</span>
+                    <span>{{ __('status_history.days_ago', ['days' => $days]) }}</span>
                     <span>{{ __('status_history.today') }}</span>
                 </div>
             </div>
