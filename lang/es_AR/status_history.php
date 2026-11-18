@@ -22,4 +22,7 @@ return [
     'legend_operational' => 'Operativo',
     'legend_disrupted' => 'Incidente o mantenimiento',
     'legend_empty' => 'Sin eventos',
+    'no_downtime' => 'No se registraron caídas este día.',
+    'no_data_day' => 'No hay datos para este día.',
+    'related' => 'Relacionado',
 ];

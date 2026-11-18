@@ -1,4 +1,34 @@
 {{ \Cachet\Facades\CachetView::renderHook(\Cachet\View\RenderHook::STATUS_PAGE_SYSTEM_STATUS_BEFORE) }}
+{{-- Atlassian Statuspage-style uptime bars. Plain CSS because the status page ships a prebuilt Tailwind bundle. --}}
+<style>
+    .uptime-bars { display: flex; align-items: stretch; height: 34px; }
+    .uptime-day { flex: 1 1 0; min-width: 0; display: flex; justify-content: center; cursor: pointer; outline: none; }
+    .uptime-bar { display: block; width: 60%; max-width: 10px; min-width: 2px; height: 100%; border-radius: 1px; background-color: var(--uptime-color); transition: opacity .1s ease-in-out; }
+    .uptime-day:hover .uptime-bar, .uptime-day:focus-visible .uptime-bar { opacity: .6; }
+    .uptime-day:focus-visible .uptime-bar { outline: 2px solid var(--uptime-color); outline-offset: 2px; }
+    .uptime-dot { display: inline-block; width: .625rem; height: .625rem; flex-shrink: 0; border-radius: 9999px; background-color: var(--uptime-color); }
+    .uptime-bar--operational { --uptime-color: #2fcc66; }
+    .uptime-bar--degraded { --uptime-color: #f1c40f; }
+    .uptime-bar--partial { --uptime-color: #e67e22; }
+    .uptime-bar--major { --uptime-color: #e74c3c; }
+    .uptime-bar--maintenance { --uptime-color: #3498db; }
+    .uptime-bar--nodata { --uptime-color: #b3bac5; }
+    .uptime-axis { margin-top: .375rem; }
+    .uptime-axis--mobile { display: none; }
+    .uptime-tip-list > * + * { margin-top: .375rem; }
+    .uptime-tip-gap { margin-top: .375rem; }
+    .uptime-tip-related { padding-top: .75rem; }
+    .uptime-tip-heading { text-transform: uppercase; letter-spacing: .025em; }
+    .uptime-tip-duration { font-variant-numeric: tabular-nums; }
+    @media (prefers-color-scheme: dark) {
+        .uptime-bar--nodata { --uptime-color: #52525b; }
+    }
+    @media (max-width: 639px) {
+        .uptime-day--older { display: none; }
+        .uptime-axis--full { display: none; }
+        .uptime-axis--mobile { display: inline; }
+    }
+</style>
 <section data-component="system-status" class="status-overview">
     <header class="status-overview__masthead flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -35,15 +65,7 @@
                         @php($groupStatus = $group['components']->pluck('status')->sortByDesc(fn ($status) => $status->severity())->first() ?? \Cachet\Enums\ComponentStatusEnum::operational)
                         <span data-slot="status-badge" class="{{ \App\Support\StatusBadge::classes($groupStatus) }}">{{ $groupStatus->getLabel() }}</span>
                     </div>
-                    <div data-slot="indicators" x-show="! $disclosure.isOpen" class="mt-3 grid h-8 gap-px sm:h-4" style="grid-template-columns: repeat({{ $group['days']->count() }}, minmax(2px, 1fr))">
-                        @foreach ($group['days'] as $date => $status)
-                            <x-cachet::system-status-day :$date :$status :events="$group['events']->get($date, [])" :aggregate="true" />
-                        @endforeach
-                    </div>
-                    <div data-slot="axis" x-show="! $disclosure.isOpen" class="mt-1.5 flex justify-between text-[11px] tracking-tight text-zinc-400 dark:text-zinc-500">
-                        <span>{{ __('status_history.days_ago', ['days' => $days]) }}</span>
-                        <span>{{ __('status_history.today') }}</span>
-                    </div>
+                    <x-uptime-bars :row="$group" :$days :aggregate="true" x-show="! $disclosure.isOpen" class="mt-3" />
                 </button>
 
                 <div data-slot="content" x-disclosure:panel x-collapse class="border-t border-zinc-900/10 bg-zinc-50/40 dark:border-white/15 dark:bg-white/[0.02]">
@@ -60,15 +82,7 @@
                                         <span data-slot="status-badge" class="{{ \App\Support\StatusBadge::classes($componentRow['status']) }}">{{ $componentRow['status']->getLabel() }}</span>
                                     </div>
                                 </div>
-                                <div data-slot="indicators" class="mt-3 grid h-8 gap-px sm:h-4" style="grid-template-columns: repeat({{ $componentRow['days']->count() }}, minmax(2px, 1fr))">
-                                    @foreach ($componentRow['days'] as $date => $status)
-                                        <x-cachet::system-status-day :$date :$status :events="$componentRow['events']->get($date, [])" />
-                                    @endforeach
-                                </div>
-                                <div data-slot="axis" class="mt-1.5 flex justify-between text-[11px] tracking-tight text-zinc-400 dark:text-zinc-500">
-                                    <span>{{ __('status_history.days_ago', ['days' => $days]) }}</span>
-                                    <span>{{ __('status_history.today') }}</span>
-                                </div>
+                                <x-uptime-bars :row="$componentRow" :$days class="mt-3" />
                             </div>
                             {{ \Cachet\Facades\CachetView::renderHook(\Cachet\View\RenderHook::STATUS_PAGE_SYSTEM_STATUS_COMPONENT_AFTER) }}
                         @endforeach
@@ -90,15 +104,7 @@
                         <span data-slot="status-badge" class="{{ \App\Support\StatusBadge::classes($componentRow['status']) }}">{{ $componentRow['status']->getLabel() }}</span>
                     </div>
                 </div>
-                <div data-slot="indicators" class="mt-3 grid h-8 gap-px sm:h-4" style="grid-template-columns: repeat({{ $componentRow['days']->count() }}, minmax(2px, 1fr))">
-                    @foreach ($componentRow['days'] as $date => $status)
-                        <x-cachet::system-status-day :$date :$status :events="$componentRow['events']->get($date, [])" />
-                    @endforeach
-                </div>
-                <div data-slot="axis" class="mt-1.5 flex justify-between text-[11px] tracking-tight text-zinc-400 dark:text-zinc-500">
-                    <span>{{ __('status_history.days_ago', ['days' => $days]) }}</span>
-                    <span>{{ __('status_history.today') }}</span>
-                </div>
+                <x-uptime-bars :row="$componentRow" :$days class="mt-3" />
             </div>
             {{ \Cachet\Facades\CachetView::renderHook(\Cachet\View\RenderHook::STATUS_PAGE_SYSTEM_STATUS_COMPONENT_AFTER) }}
         @endforeach
