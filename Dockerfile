@@ -83,7 +83,32 @@ RUN apt-get update \
         pdo_pgsql \
         pdo_sqlite \
         zip \
+    # Keep only the shared libraries the compiled extensions link against;
+    # drop compilers, headers and -dev packages (they were most of the scanner findings).
+    && runtime="$(find /usr/local/lib/php/extensions -type f -name '*.so' -exec ldd '{}' ';' \
+        | awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) next; gsub("^/(usr/)?", "", so); print so }' \
+        | sort -u | xargs -r dpkg-query --search | cut -d: -f1 | sort -u)" \
+    && apt-mark manual $runtime >/dev/null \
+    && apt-get purge -y --auto-remove \
+        $PHPIZE_DEPS \
+        libicu-dev \
+        libpng-dev \
+        libjpeg62-turbo-dev \
+        libfreetype6-dev \
+        libzip-dev \
+        libpq-dev \
+        libsqlite3-dev \
+        libldap2-dev \
+        libc6-dev \
+        linux-libc-dev \
+    && apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*
+
+# Production php.ini plus hardening:
+# - session.upload_progress off: mitigation for CVE-2026-115560 until the next PHP release.
+# - expose_php off: don't advertise the PHP version in X-Powered-By.
+RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
+    && printf 'expose_php = Off\nsession.upload_progress.enabled = 0\n' > "$PHP_INI_DIR/conf.d/zz-cachet-security.ini"
 
 # Serve Laravel's public/ directory and allow .htaccess rewrites.
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
